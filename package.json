@@ -28,6 +28,7 @@
     "@types/normalizr": "^2.0.18",
     "bootstrap": "^4.0.0",
     "core-js": "^2.4.1",
+    "ng2-rx-componentdestroyed": "^1.1.2",
     "ngrx-store-freeze": "^0.2.1",
     "normalizr": "^3.2.4",
     "rxjs": "^5.5.6",
