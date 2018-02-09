@@ -4,6 +4,7 @@ import {CommentComponent} from './comment/comment.component';
 import {PostComponent} from './post/post.component';
 import {BlogService} from './blog.service';
 import {HttpClientModule} from '@angular/common/http';
+import { PostListComponent } from './post-list/post-list.component';
 
 @NgModule({
   imports: [
@@ -12,10 +13,11 @@ import {HttpClientModule} from '@angular/common/http';
   ],
   declarations: [
     CommentComponent,
-    PostComponent
+    PostComponent,
+    PostListComponent
   ],
   exports: [
-    PostComponent
+    PostListComponent,
   ],
   providers: [
     BlogService
