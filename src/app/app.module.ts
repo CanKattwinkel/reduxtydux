@@ -11,6 +11,9 @@ import {EffectsModule} from '@ngrx/effects';
 import {AppEffects} from './app.effects';
 import {ReactiveFormsModule} from '@angular/forms';
 import {reducers} from './app.store';
+import {PostSearchStore} from './tydux/post-search.store';
+import {PostStore} from './tydux/post.store';
+import {CommentsStore} from './tydux/comments.store';
 
 
 @NgModule({
@@ -25,7 +28,11 @@ import {reducers} from './app.store';
     BlogModule,
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [
+    PostSearchStore,
+    PostStore,
+    CommentsStore
+  ],
   bootstrap: [
     AppComponent
   ]

@@ -10,6 +10,7 @@ import {FormUpdate} from './post-search/post-search.actions';
 import {Post, PostWithComments} from './common/blog/post/post.model';
 import {startWith, takeUntil} from 'rxjs/operators';
 import {componentDestroyed} from 'ng2-rx-componentdestroyed';
+import {PostSearchStore} from './tydux/post-search.store';
 
 @Component({
   selector: 'rvt-root',
@@ -17,11 +18,16 @@ import {componentDestroyed} from 'ng2-rx-componentdestroyed';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
+
   loading$: Observable<boolean>;
+
   posts$: Observable<PostWithComments[] | Post[]>;
+
   searchForm: FormGroup;
 
-  constructor(private readonly blogService: BlogService, private store: Store<RootState>) {
+  constructor(private readonly blogService: BlogService,
+              private readonly store: Store<RootState>,
+              private readonly postSearchStore: PostSearchStore) {
     this.initForm();
 
     this.loading$ = this.store.select(getPostSearchIsFetching);
