@@ -7,6 +7,7 @@ import {normalizePosts} from '../common/blog/post.adapter';
 import {map} from 'rxjs/operators';
 import {CommentsStore} from './comments.store';
 import {Injectable} from '@angular/core';
+import {UnboundedObservable} from '@w11k/tydux/dist/UnboundedObservable';
 
 
 export class PostSearchMutators extends Mutators<State> {
@@ -27,9 +28,9 @@ export class PostSearchMutators extends Mutators<State> {
 @Injectable()
 export class PostSearchStore extends Store<PostSearchMutators, State> {
 
-  constructor(private blogService: BlogService,
-              private postStore: PostStore,
-              private commentsStore: CommentsStore) {
+  constructor(readonly blogService: BlogService,
+              readonly postStore: PostStore,
+              readonly commentsStore: CommentsStore) {
 
     super('postSearch', new PostSearchMutators(), initialState);
   }
@@ -37,6 +38,20 @@ export class PostSearchStore extends Store<PostSearchMutators, State> {
   formUpdate(payload: Partial<SearchForm>) {
     this.mutate.formUpdate(payload);
     this.fetchPosts();
+  }
+
+  selectPosts() {
+    return new UnboundedObservable(
+      this.postStore.select(state => {
+        return state.ids;
+      }).unbounded()
+        .pipe(
+          map(() => {
+            const state = this.postStore.state;
+            return (state.ids as string[]).map(id => state.entities[id]);
+          })
+        )
+    );
   }
 
   private async fetchPosts() {

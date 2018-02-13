@@ -57,7 +57,7 @@ export const getCombinedPosts = createSelector(
 );
 
 
-function matchPostsWithComments(posts: Post[], commentDictionary: Dictionary<TComment>, includeComments: boolean) {
+export function matchPostsWithComments(posts: Post[], commentDictionary: Dictionary<TComment>, includeComments: boolean) {
   return includeComments
     ? posts.map(post => ({...post, comments: post.comments ? post.comments.map(commendId => commentDictionary[commendId]) : []}))
     : posts;

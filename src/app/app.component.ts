@@ -8,7 +8,7 @@ import {SearchForm} from './search-form.model';
 import * as postSearchActions from './post-search/post-search.actions';
 import {FormUpdate} from './post-search/post-search.actions';
 import {Post, PostWithComments} from './common/blog/post/post.model';
-import {startWith, takeUntil} from 'rxjs/operators';
+import {map, startWith, takeUntil} from 'rxjs/operators';
 import {componentDestroyed} from 'ng2-rx-componentdestroyed';
 import {PostSearchStore} from './tydux/post-search.store';
 
@@ -26,12 +26,14 @@ export class AppComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
 
   constructor(private readonly blogService: BlogService,
-              private readonly store: Store<RootState>,
               private readonly postSearchStore: PostSearchStore) {
     this.initForm();
 
-    this.loading$ = this.store.select(getPostSearchIsFetching);
-    this.posts$ = this.store.select(getCombinedPosts);
+    // this.loading$ = this.store.select(getPostSearchIsFetching);
+    this.loading$ = postSearchStore.select(s => s.isFetching).boundToComponent(this);
+
+    // this.posts$ = this.store.select(getCombinedPosts);
+    this.posts$ = this.postSearchStore.selectPosts().boundToComponent(this);
   }
 
 
@@ -46,13 +48,18 @@ export class AppComponent implements OnInit, OnDestroy {
         takeUntil(componentDestroyed(this)),
         startWith(this.searchForm.value)
       )
-      .subscribe((updates: SearchForm) => this.store.dispatch(new FormUpdate(updates)));
+      .subscribe((updates: SearchForm) => {
+        // this.store.dispatch(new FormUpdate(updates));
+        this.postSearchStore.formUpdate(updates);
+      });
   }
 
   ngOnInit() {
-    this.store.select(getPostSearchForm)
-      .pipe(takeUntil(componentDestroyed(this)))
-      .subscribe(updates => this.updateForm(updates));
+    // this.store.select(getPostSearchForm)
+    //   .pipe(takeUntil(componentDestroyed(this)))
+    //   .subscribe(updates => {
+    //     this.updateForm(updates);
+    //   });
   }
 
   updateForm(patch: Partial<SearchForm>) {
@@ -60,7 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   go() {
-    this.store.dispatch(new postSearchActions.FetchPosts(this.searchForm.value));
+    // this.store.dispatch(new postSearchActions.FetchPosts(this.searchForm.value));
   }
 
   ngOnDestroy(): void {

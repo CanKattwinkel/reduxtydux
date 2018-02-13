@@ -22,9 +22,9 @@ import {CommentsStore} from './tydux/comments.store';
   ],
   imports: [
     BrowserModule,
-    StoreModule.forRoot(reducers),
-    !environment.production ? StoreDevtoolsModule.instrument() : [],
-    EffectsModule.forRoot([AppEffects]),
+    // StoreModule.forRoot(reducers),
+    // !environment.production ? StoreDevtoolsModule.instrument() : [],
+    // EffectsModule.forRoot([AppEffects]),
     BlogModule,
     ReactiveFormsModule,
   ],
