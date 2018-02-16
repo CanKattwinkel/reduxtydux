@@ -1,13 +1,14 @@
-import {SearchForm} from '../search-form.model';
-import {BlogService} from '../common/blog/blog.service';
-import {Mutators, Store} from '@w11k/tydux';
-import {initialState, State} from '../post-search/post-search.reducer';
-import {PostStore} from './post.store';
-import {normalizePosts} from '../common/blog/post.adapter';
-import {map} from 'rxjs/operators';
-import {CommentsStore} from './comments.store';
+import {Mutators, selectMany, Store, UnboundedObservable} from '@w11k/tydux';
 import {Injectable} from '@angular/core';
-import {UnboundedObservable} from '@w11k/tydux/dist/UnboundedObservable';
+import {SearchForm} from '../search-form.model';
+import {initialState, State} from '../post-search/post-search.reducer';
+import {normalizePosts} from '../common/blog/post.adapter';
+import {debounceTime, distinctUntilChanged, map, skip} from 'rxjs/operators';
+import {CommentsStore} from './comments.store';
+import {PostStore} from './post.store';
+import {BlogService} from '../common/blog/blog.service';
+import {matchPostsWithComments} from '../app.store';
+import {Post, PostWithComments} from '../common/blog/post/post.model';
 
 
 export class PostSearchMutators extends Mutators<State> {
@@ -33,28 +34,42 @@ export class PostSearchStore extends Store<PostSearchMutators, State> {
               readonly commentsStore: CommentsStore) {
 
     super('postSearch', new PostSearchMutators(), initialState);
+
+    // initial loading
+    this.fetchPosts();
+
+    // search change
+    this.selectNonNil(s => s.str).pipe(
+      skip(1),
+      debounceTime(500),
+      distinctUntilChanged()
+    ).asObservable()
+      .subscribe(() => this.fetchPosts());
+
+    // includeComments changed
+    this.selectNonNil(s => s.includeComments).pipe(
+      skip(1)
+    ).asObservable()
+      .subscribe(() => this.fetchPosts());
   }
 
   formUpdate(payload: Partial<SearchForm>) {
     this.mutate.formUpdate(payload);
-    this.fetchPosts();
   }
 
-  selectPosts() {
-    return new UnboundedObservable(
-      this.postStore.select(state => {
-        return state.ids;
-      }).unbounded()
-        .pipe(
-          map(() => {
-            const state = this.postStore.state;
-            return (state.ids as string[]).map(id => state.entities[id]);
-          })
-        )
+  selectPosts(): UnboundedObservable<Post[] | PostWithComments[]> {
+    return selectMany(
+      this.postStore.select(state => state.ids),
+      this.postStore.select(state => state.entities),
+      this.commentsStore.select(state => state.entities),
+      (ids: string[], entries, comments) => {
+        const posts = ids.map(id => entries[id]);
+        return matchPostsWithComments(posts, comments, this.state.includeComments);
+      }
     );
   }
 
-  private async fetchPosts() {
+  async fetchPosts() {
     this.mutate.setFetchState(true);
 
     await this.blogService.fetchPosts(this.state.includeComments, this.state.str)
@@ -62,12 +77,10 @@ export class PostSearchStore extends Store<PostSearchMutators, State> {
         map(data => normalizePosts(data)),
       )
       .subscribe((data) => {
-        this.postStore.loadPosts(data.posts);
-        this.commentsStore.loadComments(data.comments);
-
+        this.postStore.loadPosts(data.posts as any);
+        this.commentsStore.loadComments(data.comments as any);
         this.mutate.setFetchState(false);
       });
-
   }
 
 }

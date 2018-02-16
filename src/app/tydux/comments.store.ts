@@ -1,15 +1,15 @@
 import {Mutators, Store} from '@w11k/tydux';
 import {initialState, State} from '../common/blog/comment/comment.reducer';
-import {arrayToDictionary} from './utils';
 import {TComment} from '../common/blog/comment/comment.model';
 import {Injectable} from '@angular/core';
+import * as _ from 'lodash';
 
 
 export class CommentsMutators extends Mutators<State> {
 
-  loadPosts(comments: TComment[]) {
-    this.state.entities = arrayToDictionary(comments, 'id');
-    this.state.ids = comments.map(post => post.id);
+  loadComments(comments: { [id: string]: TComment }) {
+    this.state.entities = comments;
+    this.state.ids = _.keys(comments);
   }
 
 }
@@ -21,8 +21,8 @@ export class CommentsStore extends Store<CommentsMutators, State> {
     super('comments', new CommentsMutators(), initialState);
   }
 
-  loadComments(comments: TComment[]) {
-    this.mutate.loadPosts(comments);
+  loadComments(comments: { [id: string]: TComment }) {
+    this.mutate.loadComments(comments);
   }
 
 }

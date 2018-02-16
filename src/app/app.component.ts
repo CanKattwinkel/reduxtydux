@@ -2,15 +2,14 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {BlogService} from './common/blog/blog.service';
 import {Observable} from 'rxjs/Observable';
 import {FormControl, FormGroup} from '@angular/forms';
-import {Store} from '@ngrx/store';
-import {getCombinedPosts, getPostSearchForm, getPostSearchIsFetching, RootState} from './app.store';
 import {SearchForm} from './search-form.model';
-import * as postSearchActions from './post-search/post-search.actions';
-import {FormUpdate} from './post-search/post-search.actions';
 import {Post, PostWithComments} from './common/blog/post/post.model';
-import {map, startWith, takeUntil} from 'rxjs/operators';
+import {startWith, takeUntil} from 'rxjs/operators';
 import {componentDestroyed} from 'ng2-rx-componentdestroyed';
 import {PostSearchStore} from './tydux/post-search.store';
+import {getPostSearchForm, RootState} from './app.store';
+import {Store} from '@ngrx/store';
+
 
 @Component({
   selector: 'rvt-root',
@@ -26,6 +25,7 @@ export class AppComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
 
   constructor(private readonly blogService: BlogService,
+              private store: Store<RootState>,
               private readonly postSearchStore: PostSearchStore) {
     this.initForm();
 
@@ -55,11 +55,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.store.select(getPostSearchForm)
-    //   .pipe(takeUntil(componentDestroyed(this)))
-    //   .subscribe(updates => {
+    this.store.select(getPostSearchForm)
+      .pipe(takeUntil(componentDestroyed(this)))
+      .subscribe(updates => {
     //     this.updateForm(updates);
-    //   });
+      });
   }
 
   updateForm(patch: Partial<SearchForm>) {
@@ -68,6 +68,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   go() {
     // this.store.dispatch(new postSearchActions.FetchPosts(this.searchForm.value));
+    this.postSearchStore.fetchPosts();
   }
 
   ngOnDestroy(): void {
