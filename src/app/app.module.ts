@@ -5,6 +5,10 @@ import {NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {BlogModule} from './common/blog/blog.module';
 import {ReactiveFormsModule} from '@angular/forms';
+import { StoreModule } from '@ngrx/store';
+import { reducers, metaReducers } from './app.store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
 
 
 @NgModule({
@@ -15,6 +19,8 @@ import {ReactiveFormsModule} from '@angular/forms';
     BrowserModule,
     BlogModule,
     ReactiveFormsModule,
+    StoreModule.forRoot(reducers, { metaReducers }),
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
   providers: [],
   bootstrap: [

@@ -12,7 +12,7 @@ yarn add @ngrx/schematics --dev
 
 
 3. Dependency
-yarn add @ngrx/{store,effects,store-devtools,entity}  
+yarn add @ngrx/{store,effects,store-devtools,entity}   ngrx-store-freeze
 
 4. Initial State Setup
 ng generate store State --root --module app.module.ts --collection @ngrx/schematics
