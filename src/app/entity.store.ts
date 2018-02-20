@@ -1,9 +1,10 @@
 import * as _ from 'lodash';
 import {Mutators, Store} from '@w11k/tydux';
 import {Dictionary} from '@ngrx/entity/src/models';
+import {map} from 'rxjs/operators';
 
 export interface EntityState<T> {
-  ids: string[] | number[];
+  ids: Array<string | number>;
   entities: Dictionary<T>;
 }
 
@@ -28,6 +29,15 @@ export class EntityStore<T> extends Store<EntityMutators<T>, EntityState<T>> {
 
   load(objs: { [id: string]: T }) {
     this.mutate.load(objs);
+  }
+
+  selectAll() {
+    return this.select()
+      .pipe(
+        map(state => {
+          return state.ids.map((id) => state.entities[id]);
+        })
+      );
   }
 
 }

@@ -60,11 +60,9 @@ export class PostSearchStore extends Store<PostSearchMutators, State> {
 
   selectPosts(): UnboundedObservable<Post[] | PostWithComments[]> {
     return selectMany(
-      this.postStore.select(state => state.ids),
-      this.postStore.select(state => state.entities),
+      this.postStore.selectAll(),
       this.commentsStore.select(state => state.entities),
-      (ids: string[], entries, comments) => {
-        const posts = ids.map(id => entries[id]);
+      (posts: Post[], comments) => {
         return matchPostsWithComments(posts, comments, this.state.includeComments);
       }
     );
