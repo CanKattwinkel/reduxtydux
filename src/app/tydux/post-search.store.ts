@@ -39,11 +39,12 @@ export class PostSearchStore extends Store<PostSearchMutators, State> {
     this.fetchPosts();
 
     // search change
-    this.selectNonNil(s => s.str).pipe(
-      skip(1),
-      debounceTime(500),
-      distinctUntilChanged()
-    ).asObservable()
+    this.selectNonNil(s => s.str)
+      .pipe(
+        skip(1),
+        debounceTime(500),
+        distinctUntilChanged()
+      ).asObservable()
       .subscribe(() => this.fetchPosts());
 
     // includeComments changed
@@ -77,8 +78,8 @@ export class PostSearchStore extends Store<PostSearchMutators, State> {
         map(data => normalizePosts(data)),
       )
       .subscribe((data) => {
-        this.postStore.loadPosts(data.posts as any);
-        this.commentsStore.loadComments(data.comments as any);
+        this.postStore.load(data.posts as any);
+        this.commentsStore.load(data.comments as any);
         this.mutate.setFetchState(false);
       });
   }
