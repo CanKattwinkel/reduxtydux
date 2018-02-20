@@ -9,6 +9,7 @@ import {getPostSearchForm, getPostSearchIsFetching, RootState} from './app.store
 import {startWith, takeUntil} from 'rxjs/operators';
 import {componentDestroyed} from 'ng2-rx-componentdestroyed';
 import {FormUpdate} from './post-search/post-search.actions';
+import * as postSearchActions from './post-search/post-search.actions';
 
 @Component({
   selector: 'rvt-root',
@@ -41,6 +42,10 @@ export class AppComponent implements OnInit, OnDestroy {
       includeComments: new FormControl(),
     });
 
+  }
+
+  go() {
+    this.store.dispatch(new postSearchActions.FetchPosts(this.searchForm.value));
   }
 
   ngOnInit() {
