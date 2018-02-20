@@ -58,7 +58,6 @@
     "styleExt": "scss",
     "component": {},
     "schematics": {
-      "collection": "@ngrx/schematics"
     }
   }
 }
