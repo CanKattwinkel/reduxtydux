@@ -27,7 +27,7 @@
     "@ngrx/store-devtools": "^5.0.1",
     "@types/lodash": "4.14.103",
     "@types/normalizr": "^2.0.18",
-    "@w11k/tydux": "2.0.5",
+    "@w11k/tydux": "2.0.7",
     "bootstrap": "^4.0.0",
     "core-js": "^2.4.1",
     "lodash": "4.17.5",

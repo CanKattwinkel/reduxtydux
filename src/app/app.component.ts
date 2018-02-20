@@ -7,8 +7,6 @@ import {Post, PostWithComments} from './common/blog/post/post.model';
 import {startWith, takeUntil} from 'rxjs/operators';
 import {componentDestroyed} from 'ng2-rx-componentdestroyed';
 import {PostSearchStore} from './tydux/post-search.store';
-import {getPostSearchForm, RootState} from './app.store';
-import {Store} from '@ngrx/store';
 
 
 @Component({
@@ -25,7 +23,7 @@ export class AppComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
 
   constructor(private readonly blogService: BlogService,
-              private store: Store<RootState>,
+              // private store: Store<RootState>,
               private readonly postSearchStore: PostSearchStore) {
     this.initForm();
 
@@ -55,11 +53,21 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.store.select(getPostSearchForm)
-      .pipe(takeUntil(componentDestroyed(this)))
-      .subscribe(updates => {
+    // this.store.select(getPostSearchForm)
+    //   .pipe(takeUntil(componentDestroyed(this)))
+    //   .subscribe(updates => {
     //     this.updateForm(updates);
-      });
+    //   });
+
+    this.postSearchStore
+      .select(s => {
+        return {
+          str: s.str,
+          includeComments: s.includeComments
+        };
+      })
+      .boundToComponent(this)
+      .subscribe((state) => this.updateForm(state));
   }
 
   updateForm(patch: Partial<SearchForm>) {
