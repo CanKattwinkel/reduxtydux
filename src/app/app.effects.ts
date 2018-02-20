@@ -31,8 +31,8 @@ export class AppEffects {
       map(data => normalizePosts(data)),
       mergeMap(data => [
           new LoadPosts({posts: data.posts}),
-          new postSearchActions.FetchPostsSuccess(),
-          new LoadComments({comments: data.comments})
+          new LoadComments({comments: data.comments}),
+          new postSearchActions.FetchPostsSuccess()
         ]
       ),
     );

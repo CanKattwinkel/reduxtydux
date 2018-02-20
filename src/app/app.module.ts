@@ -4,16 +4,10 @@ import {NgModule} from '@angular/core';
 
 import {AppComponent} from './app.component';
 import {BlogModule} from './common/blog/blog.module';
-import {StoreModule} from '@ngrx/store';
-import {StoreDevtoolsModule} from '@ngrx/store-devtools';
-import {environment} from '../environments/environment';
-import {EffectsModule} from '@ngrx/effects';
-import {AppEffects} from './app.effects';
 import {ReactiveFormsModule} from '@angular/forms';
-import {reducers} from './app.store';
-import {PostSearchStore} from './tydux/post-search.store';
-import {PostStore} from './tydux/post.store';
-import {CommentsStore} from './tydux/comments.store';
+import {PostSearchStore} from './tydux/PostSearch.store';
+import {PostStore} from './tydux/Post.store';
+import {CommentStore} from './tydux/Comment.store';
 
 
 @NgModule({
@@ -31,10 +25,11 @@ import {CommentsStore} from './tydux/comments.store';
   providers: [
     PostSearchStore,
     PostStore,
-    CommentsStore
+    CommentStore
   ],
   bootstrap: [
     AppComponent
   ]
 })
-export class AppModule { }
+export class AppModule {
+}

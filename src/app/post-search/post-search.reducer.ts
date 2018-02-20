@@ -3,7 +3,7 @@ import {PostSearchActions, PostSearchActionTypes} from './post-search.actions';
 
 
 export interface State {
-  str: string;
+  str?: string;
   isFetching: boolean;
   includeComments: boolean;
 }
