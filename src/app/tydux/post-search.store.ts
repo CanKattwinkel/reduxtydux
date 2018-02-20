@@ -68,10 +68,10 @@ export class PostSearchStore extends Store<PostSearchMutators, State> {
     );
   }
 
-  async fetchPosts() {
+  fetchPosts() {
     this.mutate.setFetchState(true);
 
-    await this.blogService.fetchPosts(this.state.includeComments, this.state.str)
+    this.blogService.fetchPosts(this.state.includeComments, this.state.str)
       .pipe(
         map(data => normalizePosts(data)),
       )

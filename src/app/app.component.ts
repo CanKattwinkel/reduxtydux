@@ -7,6 +7,7 @@ import {Post, PostWithComments} from './common/blog/post/post.model';
 import {startWith, takeUntil} from 'rxjs/operators';
 import {componentDestroyed} from 'ng2-rx-componentdestroyed';
 import {PostSearchStore} from './tydux/post-search.store';
+import {getSearchForm} from './post-search/post-search.reducer';
 
 
 @Component({
@@ -61,10 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.postSearchStore
       .select(s => {
-        return {
-          str: s.str,
-          includeComments: s.includeComments
-        };
+        return getSearchForm(s);
       })
       .boundToComponent(this)
       .subscribe((state) => this.updateForm(state));
