@@ -4,6 +4,11 @@ import {Observable} from 'rxjs/Observable';
 import {FormControl, FormGroup} from '@angular/forms';
 import {SearchForm} from './search-form.model';
 import {Post, PostWithComments} from './common/blog/post/post.model';
+import {Store} from '@ngrx/store';
+import {getPostSearchForm, getPostSearchIsFetching, RootState} from './app.store';
+import {startWith, takeUntil} from 'rxjs/operators';
+import {componentDestroyed} from 'ng2-rx-componentdestroyed';
+import {FormUpdate} from './post-search/post-search.actions';
 
 @Component({
   selector: 'rvt-root',
@@ -15,9 +20,18 @@ export class AppComponent implements OnInit, OnDestroy {
   posts$: Observable<PostWithComments[] | Post[]>;
   searchForm: FormGroup;
 
-  constructor(private readonly blogService: BlogService) {
+  constructor(private readonly blogService: BlogService, private store: Store<RootState>) {
     this.initForm();
 
+    this.loading$ = this.store.select(getPostSearchIsFetching);
+    this.searchForm.valueChanges.pipe(
+      takeUntil((componentDestroyed(this))),
+      startWith(this.searchForm.value)
+    ).subscribe(formUpdate => this.store.dispatch(new FormUpdate(formUpdate)));
+
+    this.store.select(getPostSearchForm)
+      .pipe(takeUntil(componentDestroyed(this)))
+      .subscribe(storeUpdate => this.updateForm(storeUpdate));
   }
 
 
